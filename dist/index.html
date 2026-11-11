@@ -98,5 +98,18 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .candy.round,.candy.heart,.packed-run.bad.round,.packed-run.bad.heart{width:109px!important;height:109px!important}
 .packed-run.completed{left:calc(50% - 60px)!important;opacity:1!important;animation:outRight 1.15s linear forwards!important}
 </style>`);
+// These two output lanes deliberately do not reuse the legacy .packed-run rules.
+// That makes a miss continue from its exact x-position, and makes every success visibly wrapped.
+function emitMiss(type,startX){const unit=document.createElement('div');unit.className='miss-run '+type;unit.style.setProperty('--start-x',startX);stage.append(unit);setTimeout(()=>unit.remove(),1150)}
+function emitWrapped(){const unit=document.createElement('div');unit.className='wrap-run';unit.innerHTML='<i></i>';stage.append(unit);setTimeout(()=>unit.remove(),1150)}
+tick=function(){if(!running)return;const now=music.currentTime,target=chart[index];if(target){const type=spriteType(index),lead=target-now,progress=Math.max(0,Math.min(1,(1.2-lead)/2.4));candy.className='candy '+type;candy.style.left=(-70+progress*(stage.clientWidth+74))+'px';const visible=lead<1.2&&lead>-.3;candy.classList.toggle('active',visible);candy.style.visibility=visible?'visible':'hidden';prompt.textContent=lead<.30&&lead>-.25?'지금 프레스!':'사탕이 일정한 속도로 지나갑니다…'}while(index<chart.length&&now-chart[index]>.22){const type=spriteType(index);emitMiss(type,candy.style.left);candy.style.visibility='hidden';miss++;wrapped.push('bad');comboN=0;show('MISS','miss');index++;update()}if(index>=chart.length&&now>chart[chart.length-1]+.7)finish()};
+hit=function(){if(!running||index>=chart.length)return;const d=Math.abs(music.currentTime-chart[index]);if(d>.28)return;stamp.classList.add('hit');setTimeout(()=>stamp.classList.remove('hit'),70);if(d<=.075){perfect++;wrapped.push('good');score+=1000;comboN++;show('PERFECT!','perfect')}else{good++;wrapped.push('good');score+=550;comboN++;show('GOOD','good')}candy.style.visibility='hidden';emitWrapped();index++;update()};
+document.head.insertAdjacentHTML('beforeend',`<style>
+/* All note centres sit exactly on the conveyor centreline (98.5px above stage bottom). */
+.candy.round,.candy.heart{bottom:44px!important}.candy.cane{bottom:66px!important}
+.miss-run{position:absolute;z-index:2;bottom:44px;width:109px;height:109px;background:center/contain no-repeat;animation:missExit 1.05s linear forwards;pointer-events:none}.miss-run.round{background-image:url('assets/round-candy.png')}.miss-run.heart{background-image:url('assets/heart-chocolate.png')}.miss-run.cane{bottom:66px;width:64px;height:64px;background-image:url('assets/candy-cane.png')}@keyframes missExit{from{left:var(--start-x)}to{left:calc(100% + 120px)}}
+.wrap-run{position:absolute;z-index:2;left:calc(50% - 60px);bottom:72px;width:120px;height:54px;border:3px solid #3a0b17;border-radius:10px;background:linear-gradient(135deg,#ffe4d7 0 28%,#c72743 29% 72%,#8e122b 73%);box-shadow:3px 3px 0 #080508;animation:wrapExit 1.05s linear forwards}.wrap-run:before,.wrap-run:after{content:'';position:absolute;top:10px;width:24px;height:29px;background:#b91d38;border:3px solid #3a0b17;z-index:-1}.wrap-run:before{left:-20px;clip-path:polygon(100% 0,0 18%,0 82%,100% 100%)}.wrap-run:after{right:-20px;clip-path:polygon(0 0,100% 18%,100% 82%,0 100%)}.wrap-run i{display:block;width:25px;height:25px;margin:11px auto;border:2px solid #3a0b17;border-radius:50%;background:#f7d5b8}@keyframes wrapExit{to{left:calc(100% + 120px)}}
+.prompt{top:auto!important;bottom:10px!important;font-size:15px!important;line-height:1.15;z-index:6!important}
+</style>`);
 </script></body></html>
 
