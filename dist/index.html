@@ -130,5 +130,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 /* A full-machine press: down, tiny rebound above rest, then settle. Margin avoids the old transform collision. */
 .machine.hit{animation:pressPop 260ms cubic-bezier(.2,.9,.3,1.25)!important}@keyframes pressPop{0%{margin-top:0}42%{margin-top:13px}70%{margin-top:-3px}100%{margin-top:0}}
 </style>`);
+// At the chart beat (lead === 0), the visible centre of every note is the press centre.
+tick=function(){if(!running)return;const now=music.currentTime,target=chart[index];if(target){const type=spriteType(index),lead=target-now,progress=Math.max(0,Math.min(1,(1.2-lead)/2.4));const width=type==='cane'?64:109;const startX=-width-20,endX=stage.clientWidth+20;candy.className='candy '+type;candy.style.left=(startX+progress*(endX-startX))+'px';const visible=lead<1.2&&lead>-.3;candy.classList.toggle('active',visible);candy.style.visibility=visible?'visible':'hidden';prompt.textContent='사탕이 프레스기 중앙을 지날 때 눌러주세요!'}while(index<chart.length&&now-chart[index]>.22){const type=spriteType(index);emitMiss(type,candy.style.left);candy.style.visibility='hidden';miss++;wrapped.push('bad');comboN=0;show('MISS','miss');index++;update()}if(index>=chart.length&&now>chart[chart.length-1]+.7)finish()};
 </script></body></html>
 
