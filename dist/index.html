@@ -124,5 +124,11 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 /* Match the moving texture's 72px repeat to its animation distance: no seam or left-edge jump. */
 .belt{background-size:72px 100%!important;animation:beltSmooth .65s linear infinite!important}
 </style>`);
+document.head.insertAdjacentHTML('beforeend',`<style>
+/* Standalone success sprite: no shared-sheet crop, no overlapping decorative pieces. */
+.wrap-run{width:138px!important;height:74px!important;bottom:62px!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent url('assets/packed-candy.png') center/contain no-repeat!important}.wrap-run:before,.wrap-run:after,.wrap-run i{display:none!important}
+/* A full-machine press: down, tiny rebound above rest, then settle. Margin avoids the old transform collision. */
+.machine.hit{animation:pressPop 260ms cubic-bezier(.2,.9,.3,1.25)!important}@keyframes pressPop{0%{margin-top:0}42%{margin-top:13px}70%{margin-top:-3px}100%{margin-top:0}}
+</style>`);
 </script></body></html>
 
