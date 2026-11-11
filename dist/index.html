@@ -118,5 +118,11 @@ hit=function(){if(!running||index>=chart.length)return;const d=Math.abs(music.cu
 document.head.insertAdjacentHTML('beforeend',`<style>
 .machine.hit{animation:pressBounce 155ms cubic-bezier(.2,.85,.35,1.35)!important}.wrap-run{z-index:9!important;opacity:1!important;visibility:visible!important;animation:none!important}.belt{animation:beltSmooth .65s linear infinite!important;will-change:background-position}@keyframes beltSmooth{from{background-position:0 0}to{background-position:72px 0}}
 </style>`);
+// The original stage listener captured the first `hit` function. Intercept pointer input so it uses the final packing flow above.
+stage.addEventListener('pointerdown',event=>{event.stopImmediatePropagation();hit()},true);
+document.head.insertAdjacentHTML('beforeend',`<style>
+/* Match the moving texture's 72px repeat to its animation distance: no seam or left-edge jump. */
+.belt{background-size:72px 100%!important;animation:beltSmooth .65s linear infinite!important}
+</style>`);
 </script></body></html>
 
