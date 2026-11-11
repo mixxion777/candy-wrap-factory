@@ -89,4 +89,14 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 const normalResultFinish=finish;finish=function(){normalResultFinish();if(perfect===chart.length){document.querySelector('#grade').textContent='사탕 포장계의 신';document.querySelector('#comment').textContent='“28개의 사탕이 당신에게 경례했습니다.”';document.querySelector('#price').textContent='₩ 99,999';document.querySelector('#breakdown').textContent='ALL PERFECT · 공장 전설 등재 완료'}};
 // 공장 검수표 문구: 점수대별 어조를 한 세계관으로 통일한다.
 const copyResultFinish=finish;finish=function(){copyResultFinish();let rate=(perfect+good*.65)/chart.length,grade,comment;if(perfect===chart.length){grade='특급 납품품';comment='보기 좋은 사탕이 맛도 좋은 법'}else if(rate>=.88){grade='A급 선물세트';comment='선물하기에 충분히 반듯합니다'}else if(rate>=.62){grade='B급 실속세트';comment='포장은 조금 자유롭지만, 사탕은 맛있습니다'}else{grade='공장 직판용';comment='이건... 공장 직원들이 맛있게 먹었습니다'}document.querySelector('#grade').textContent=grade;document.querySelector('#comment').textContent='“'+comment+'”'};
+// A missed note keeps travelling from its actual on-screen position; it is never reused or pulled back.
+sendOut=function(type,bad=false){const unit=document.createElement('div');unit.className='packed-run '+type+(bad?' bad':' completed');if(bad&&candy.style.left)unit.style.left=candy.style.left;unit.innerHTML='<i></i>';stage.append(unit);setTimeout(()=>unit.remove(),1250)};
+tick=function(){if(!running)return;const now=music.currentTime,target=chart[index];if(target){const type=spriteType(index),lead=target-now,progress=Math.max(0,Math.min(1,(1.2-lead)/2.4));candy.className='candy '+type;candy.style.left=(-70+progress*(stage.clientWidth+74))+'px';const visible=lead<1.2&&lead>-.3;candy.classList.toggle('active',visible);candy.style.visibility=visible?'visible':'hidden';prompt.textContent=lead<.30&&lead>-.25?'지금 프레스!':'사탕이 일정한 속도로 지나갑니다…'}while(index<chart.length&&now-chart[index]>.22){const type=spriteType(index);sendOut(type,true);candy.style.visibility='hidden';miss++;wrapped.push('bad');comboN=0;show('MISS','miss');index++;update()}if(index>=chart.length&&now>chart[chart.length-1]+.7)finish()};
+hit=function(){if(!running||index>=chart.length)return;const d=Math.abs(music.currentTime-chart[index]);if(d>.28)return;const type=spriteType(index);stamp.classList.add('hit');setTimeout(()=>stamp.classList.remove('hit'),70);if(d<=.075){perfect++;wrapped.push('good');score+=1000;comboN++;show('PERFECT!','perfect')}else{good++;wrapped.push('good');score+=550;comboN++;show('GOOD','good')}candy.style.visibility='hidden';sendOut(type,false);index++;update()};
+document.head.insertAdjacentHTML('beforeend',`<style>
+/* Round candy and chocolate are deliberately 70% larger; cane stays at its established scale. */
+.candy.round,.candy.heart,.packed-run.bad.round,.packed-run.bad.heart{width:109px!important;height:109px!important}
+.packed-run.completed{left:calc(50% - 60px)!important;opacity:1!important;animation:outRight 1.15s linear forwards!important}
+</style>`);
 </script></body></html>
+
